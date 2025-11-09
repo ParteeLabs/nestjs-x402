@@ -1,0 +1,1 @@
+export const MODULE_OPTION_KEY = Symbol('X402_MODULE_OPTIONS');
