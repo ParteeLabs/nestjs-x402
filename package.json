@@ -6,7 +6,7 @@
   "author": "ParteeLabs",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json"
+    "build": "tsup"
   },
   "type": "module",
   "packageManager": "pnpm@10.19.0",
@@ -23,6 +23,7 @@
     "@nestjs/core": "^11.1.8",
     "@types/node": "^24.10.0",
     "class-validator": "^0.14.2",
+    "tsup": "^8.5.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
