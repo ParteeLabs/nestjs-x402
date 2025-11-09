@@ -6,7 +6,7 @@
   "author": "ParteeLabs",
   "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json"
   },
   "type": "module",
   "packageManager": "pnpm@10.19.0",
