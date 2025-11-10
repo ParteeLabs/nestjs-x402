@@ -1,0 +1,17 @@
+export type HttpMethodText =
+  | 'GET'
+  | 'POST'
+  | 'PUT'
+  | 'DELETE'
+  | 'PATCH'
+  | 'ALL'
+  | 'OPTIONS'
+  | 'HEAD'
+  | 'SEARCH'
+  | 'PROPFIND'
+  | 'PROPPATCH'
+  | 'MKCOL'
+  | 'COPY'
+  | 'MOVE'
+  | 'LOCK'
+  | 'UNLOCK';

@@ -17,10 +17,10 @@ export class X402Interceptor implements NestInterceptor {
   constructor(private readonly reflector: Reflector, private readonly paymentService: X402PaymentService) {}
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> | Promise<Observable<any>> {
     const t = context.getType();
-    if (t != 'http') {
+    const x402Options = this.reflector.get(X402ApiOptions, context.getHandler());
+    if (t != 'http' || x402Options === undefined) {
       return next.handle();
     }
-    const x402Options = this.reflector.get(X402ApiOptions, context.getHandler());
     // TODO: Generate API static pricing logic here.
     // TODO: Generate API dynamic pricing logic here.
     try {

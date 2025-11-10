@@ -13,23 +13,23 @@
   "module": "dist/esm/index.js",
   "packageManager": "pnpm@10.19.0",
   "dependencies": {
-    "@nestjs/common": "^11.1.8",
-    "@nestjs/swagger": "^11.2.1",
     "class-validator-jsonschema": "^5.1.0",
-    "openapi3-ts": "^4.5.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "x402": "^0.7.1"
   },
   "devDependencies": {
+    "@nestjs/common": "^11.1.8",
     "@nestjs/core": "^11.1.8",
     "@types/node": "^24.10.0",
     "class-validator": "^0.14.2",
+    "openapi3-ts": "^4.5.0",
     "tsup": "^8.5.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
+    "@nestjs/common": "^11.1.8",
     "@nestjs/core": "^11.1.8"
   }
 }

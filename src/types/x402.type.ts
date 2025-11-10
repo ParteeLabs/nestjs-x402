@@ -4,3 +4,8 @@ export type PricingRequirement = {
   price: Price;
   network: Network;
 };
+
+export type Recipient = {
+  payTo: string;
+  network: Network;
+};
