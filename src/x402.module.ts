@@ -3,6 +3,7 @@ import type { DynamicModule } from '@nestjs/common';
 import type { X402ModuleAsyncOptions, X402ModuleOptions, X402ProviderOptions } from './types/module.type';
 
 import { MODULE_OPTION_KEY } from './constants/module-options.constant';
+import { X402PaymentService } from './services/x402-payment.service';
 
 const DEFAULT_X402_MODULE_OPTIONS: Partial<X402ProviderOptions> = {
   x402Version: 1,
@@ -33,8 +34,9 @@ export class X402Module {
           provide: MODULE_OPTION_KEY,
           useValue: mergedOptions,
         },
+        X402PaymentService,
       ],
-      exports: [MODULE_OPTION_KEY],
+      exports: [MODULE_OPTION_KEY, X402PaymentService],
       global: options.global ?? false,
     };
   }
@@ -57,8 +59,9 @@ export class X402Module {
           },
           inject,
         },
+        X402PaymentService,
       ],
-      exports: [MODULE_OPTION_KEY],
+      exports: [MODULE_OPTION_KEY, X402PaymentService],
       global: global ?? false,
     };
   }
