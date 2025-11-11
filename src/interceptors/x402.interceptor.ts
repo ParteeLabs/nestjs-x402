@@ -1,12 +1,24 @@
-import { Injectable, type CallHandler, type ExecutionContext, type NestInterceptor } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  RequestMethod,
+  type CallHandler,
+  type ExecutionContext,
+  type NestInterceptor,
+} from '@nestjs/common';
+import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
+import { Request } from 'express';
+import { catchError, Observable, throwError } from 'rxjs';
 
 import { X402PaymentService } from '../services/x402-payment.service';
+import { X402DynamicPricing } from '../exceptions/x402-dynamic-pricing.exception';
+import { X402ApiOptions, X402ApiOptionsType } from '../decorators/x402-api-options.decorator';
 
-import { X402ApiOptions } from '../decorators/x402-options.decorator';
-import { X402Error } from '../errors/x402.error';
+import { X402ModuleOptions } from '../types/module.type';
+import { X402Response } from '../types/x402.type';
 
+import { MODULE_OPTION_KEY } from '../constants/module-options.constant';
 /**
  * Interceptor for handling X402 responding logic.
  * Default/empty/x402Scan registering cases: Returns a 402 Payment Required response with default payment requirements.
@@ -14,23 +26,72 @@ import { X402Error } from '../errors/x402.error';
  */
 @Injectable()
 export class X402Interceptor implements NestInterceptor {
-  constructor(private readonly reflector: Reflector, private readonly paymentService: X402PaymentService) {}
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> | Promise<Observable<any>> {
+  constructor(
+    private readonly reflector: Reflector,
+    @Inject(MODULE_OPTION_KEY) private readonly config: X402ModuleOptions,
+    private readonly paymentService: X402PaymentService
+  ) {}
+
+  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+    /// Check for HTTP and Route options for X402.
     const t = context.getType();
-    const x402Options = this.reflector.get(X402ApiOptions, context.getHandler());
-    if (t != 'http' || x402Options === undefined) {
+    const apiOptions = this.reflector.get(X402ApiOptions, context.getHandler());
+    if (t != 'http' || apiOptions === undefined) {
       return next.handle();
     }
-    // TODO: Generate API static pricing logic here.
-    // TODO: Generate API dynamic pricing logic here.
-    try {
-      return next.handle();
-    } catch (err) {
-      if (err instanceof X402Error && x402Options !== undefined) {
-        throw err;
-      } else {
-        throw err;
-      }
+    const method: RequestMethod = this.reflector.get(METHOD_METADATA, context.getHandler());
+    const resourcePath: string = this.reflector.get(PATH_METADATA, context.getHandler());
+
+    /// Dynamic pricing case: Handle dynamic pricing logic.
+    if (apiOptions.isDynamicPricing) {
+      return this.handleDynamicPricing(next, apiOptions, method, resourcePath);
     }
+
+    /// Static pricing case: Validate the payment.
+    const paymentRequirements = this.paymentService.getExactPaymentRequirements({
+      ...apiOptions,
+      method,
+      resourcePath,
+    });
+    const request: Request = context.switchToHttp().getRequest();
+    const { valid, x402Response } = await this.paymentService.verifyPayment(
+      paymentRequirements,
+      request.header('X-PAYMENT')
+    );
+    if (!valid) {
+      return throwError(() => x402Response);
+    }
+
+    /// Payment is valid, proceed with the request.
+    return next.handle();
+  }
+
+  protected handleDynamicPricing(
+    next: CallHandler,
+    apiOptions: X402ApiOptionsType,
+    method: RequestMethod,
+    resourcePath: string
+  ): Observable<any> {
+    return next.handle().pipe(
+      catchError((err) => {
+        if (err instanceof X402DynamicPricing) {
+          const paymentRequirements = this.paymentService.getExactPaymentRequirements(
+            {
+              ...apiOptions,
+              method,
+              resourcePath,
+            },
+            err.dynamicPrices
+          );
+          const response: X402Response = {
+            x402Version: this.config.x402Version,
+            error: err.message,
+            accepts: paymentRequirements,
+          };
+          return throwError(() => response);
+        }
+        return throwError(() => err);
+      })
+    );
   }
 }

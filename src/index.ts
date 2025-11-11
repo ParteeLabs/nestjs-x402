@@ -1,4 +1,4 @@
-export * from './errors/x402.error';
-export * from './decorators/x402-options.decorator';
+export * from './exceptions/x402-dynamic-pricing.exception';
+export * from './decorators/x402-api-options.decorator';
 export * from './interceptors/x402.interceptor';
-export * from './nestjs-x402.module';
+export * from './x402.module';

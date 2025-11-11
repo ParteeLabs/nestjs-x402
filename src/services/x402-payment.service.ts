@@ -1,11 +1,14 @@
 import { Inject, Injectable, RequestMethod } from '@nestjs/common';
-import { processPriceToAtomicAmount } from 'x402/shared';
-import { ERC20TokenAmount, HTTPRequestStructure, Network, PaymentRequirements, x402Response } from 'x402/types';
+import { verify } from 'x402/verify';
+import { exact } from 'x402/schemes';
+import { findMatchingPaymentRequirements, processPriceToAtomicAmount } from 'x402/shared';
+import { ERC20TokenAmount, HTTPRequestStructure, Network, PaymentPayload, PaymentRequirements } from 'x402/types';
 
-import { X402ApiInferredOptionsType, X402ApiOptionsType } from '../decorators/x402-options.decorator';
+import { X402ApiInferredOptionsType, X402ApiOptionsType } from '../decorators/x402-api-options.decorator';
 
 import type { X402ModuleOptions } from '../types/module.type';
 import { PricingRequirement } from '../types/x402.type';
+import { VerifyPaymentResult } from '../types/payment-service.type';
 
 import { MODULE_OPTION_KEY } from '../constants/module-options.constant';
 import { VALID_METHODS } from '../constants/http.constant';
@@ -56,8 +59,8 @@ export class X402PaymentService {
   getExactPaymentRequirements(
     apiOptions: X402ApiOptionsType & X402ApiInferredOptionsType,
     dynamicPrices?: PricingRequirement[]
-  ) {
-    const { apiPrices, resourcePath, description = '', inputSchema, outputSchema } = apiOptions;
+  ): PaymentRequirements[] {
+    const { apiPrices, resourcePath, description = '' } = apiOptions;
     const prices = dynamicPrices?.length ? dynamicPrices : apiPrices || [];
     const accepts: PaymentRequirements[] = prices.map(({ price, network }) => {
       const atomicAmountForAsset = processPriceToAtomicAmount(price, network);
@@ -82,9 +85,66 @@ export class X402PaymentService {
         },
       };
     });
-    const response: x402Response = {
-      x402Version: 1,
-      accepts,
+    return accepts;
+  }
+
+  async verifyPayment(
+    paymentRequirements: PaymentRequirements[],
+    paymentHeader?: string
+  ): Promise<VerifyPaymentResult> {
+    if (!paymentHeader) {
+      return {
+        valid: false,
+        x402Response: {
+          x402Version: this.config.x402Version,
+          error: 'X-PAYMENT header is required',
+          accepts: paymentRequirements,
+        },
+      };
+    }
+    /// Decode payment header.
+    let decodedPayment: PaymentPayload;
+    try {
+      decodedPayment = exact.evm.decodePayment(paymentHeader);
+      decodedPayment.x402Version = this.config.x402Version;
+    } catch (error) {
+      return {
+        valid: false,
+        x402Response: {
+          x402Version: this.config.x402Version,
+          error: 'Invalid or malformed payment header',
+          accepts: paymentRequirements,
+        },
+      };
+    }
+    /// Select available payment requirement and check for validity.
+    try {
+      const selectedPaymentRequirement =
+        findMatchingPaymentRequirements(paymentRequirements, decodedPayment) || paymentRequirements[0];
+      const response = await verify(decodedPayment, selectedPaymentRequirement);
+      if (!response.isValid) {
+        return {
+          valid: false,
+          x402Response: {
+            x402Version: this.config.x402Version,
+            error: response.invalidReason,
+            payer: response.payer,
+          },
+        };
+      }
+    } catch (error) {
+      return {
+        valid: false,
+        x402Response: {
+          x402Version: this.config.x402Version,
+          error: 'Error verifying payment: ' + (error as Error).message,
+          accepts: paymentRequirements,
+        },
+      };
+    }
+    // All checks passed.
+    return {
+      valid: true,
     };
   }
 }

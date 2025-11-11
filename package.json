@@ -21,8 +21,10 @@
   "devDependencies": {
     "@nestjs/common": "^11.1.8",
     "@nestjs/core": "^11.1.8",
+    "@types/express": "^5.0.5",
     "@types/node": "^24.10.0",
     "class-validator": "^0.14.2",
+    "express": "^5.1.0",
     "openapi3-ts": "^4.5.0",
     "tsup": "^8.5.0",
     "tsx": "^4.20.6",
@@ -30,6 +32,7 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^11.1.8",
-    "@nestjs/core": "^11.1.8"
+    "@nestjs/core": "^11.1.8",
+    "express": "^5.1.0"
   }
 }
