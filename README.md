@@ -54,10 +54,16 @@ This project uses [Conventional Commits](https://conventionalcommits.org/) and [
 4. Publishes to npm with provenance
 5. Creates a GitHub release
 
-#### Required Secrets
+#### OIDC Configuration
 
-To enable releases, set these repository secrets:
+This project uses **OpenID Connect (OIDC)** for secure publishing to npm - no tokens required!
 
-- `NPM_TOKEN` - npm authentication token for publishing packages
+**Setup Steps:**
 
-The `GITHUB_TOKEN` is provided automatically by GitHub Actions.
+1. **Repository**: Already configured ✅
+2. **NPM Package**: If you own this package, enable GitHub Actions publishing:
+   - Go to [npmjs.com](https://www.npmjs.com/package/nestjs-x402)
+   - Settings → Publishing access → Enable "GitHub Actions"
+   - Add repository: `ParteeLabs/nestjs-x402`
+
+That's it! No secrets or variables needed.
