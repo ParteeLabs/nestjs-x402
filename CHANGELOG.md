@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.1...v1.2.2) (2025-11-12)
+
+
+### Bug Fixes
+
+* missing module decorator ([7babcef](https://github.com/ParteeLabs/nestjs-x402/commit/7babcef3071ae8fb43f2ff56c2f1e16bce3a9165))
+
 ## [1.2.1](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.0...v1.2.1) (2025-11-12)
 
 
