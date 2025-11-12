@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.0...v1.2.1) (2025-11-12)
+
+
+### Bug Fixes
+
+* test cjs package ([ea36e05](https://github.com/ParteeLabs/nestjs-x402/commit/ea36e05dd0a561884317a1c0bdfe8826c10d1739))
+
 # [1.2.0](https://github.com/ParteeLabs/nestjs-x402/compare/v1.1.1...v1.2.0) (2025-11-12)
 
 
