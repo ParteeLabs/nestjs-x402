@@ -9,8 +9,7 @@ export default defineConfig([
     sourcemap: true,
     clean: true,
     skipNodeModulesBundle: true,
-    external: ['@nestjs/common', '@nestjs/core', 'express'],
-    noExternal: ['x402', 'reflect-metadata'],
+    cjsInterop: true,
   },
   {
     entry: ['src/index.ts'],
@@ -19,9 +18,8 @@ export default defineConfig([
     outExtension: () => ({ js: '.js' }),
     dts: false, // Only generate declarations in the ESM build
     sourcemap: true,
-    clean: true, // Avoid cleaning to preserve ESM output
+    clean: true,
     skipNodeModulesBundle: true,
-    external: ['@nestjs/common', '@nestjs/core', 'express'],
-    noExternal: ['x402', 'reflect-metadata'],
+    cjsInterop: true,
   },
 ]);
