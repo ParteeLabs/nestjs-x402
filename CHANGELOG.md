@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/ParteeLabs/nestjs-x402/compare/v1.1.0...v1.1.1) (2025-11-12)
+
+
+### Bug Fixes
+
+* module not found for commonjs ([7ca94b1](https://github.com/ParteeLabs/nestjs-x402/commit/7ca94b15311ab880830e804f4ad72a27d15f11d7))
+
 # [1.1.0](https://github.com/ParteeLabs/nestjs-x402/compare/v1.0.0...v1.1.0) (2025-11-12)
 
 
