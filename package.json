@@ -6,11 +6,16 @@
   "author": "ParteeLabs",
   "license": "MIT",
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "release": "npx semantic-release"
   },
   "type": "module",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "packageManager": "pnpm@10.19.0",
   "dependencies": {
     "class-validator-jsonschema": "^5.1.0",
@@ -21,11 +26,18 @@
   "devDependencies": {
     "@nestjs/common": "^11.1.8",
     "@nestjs/core": "^11.1.8",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.0",
+    "@semantic-release/npm": "^12.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.1",
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.0",
     "class-validator": "^0.14.2",
     "express": "^5.1.0",
     "openapi3-ts": "^4.5.0",
+    "semantic-release": "^24.2.0",
     "tsup": "^8.5.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"

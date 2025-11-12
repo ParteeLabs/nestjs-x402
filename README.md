@@ -8,6 +8,17 @@ Seamlessly integrate the x402 payment processing system into your NestJS applica
 npm install nestjs-x402
 ```
 
+## ⚠️ Warning
+
+**This library is in early development and is not yet stable.**
+
+- Breaking changes may occur frequently without notice
+- APIs and interfaces are subject to change
+- Not recommended for production use at this time
+- Use at your own risk
+
+We recommend waiting for a stable release before using this library in production applications.
+
 ## Usage
 
 > Placeholder: Detailed usage instructions will be added here.
@@ -18,3 +29,35 @@ npm install nestjs-x402
 2. NestJS is a production-ready framework for backend development but lacks built-in support for x402.
 3. Existing x402 support is limited to Express.js, leaving a gap for NestJS developers.
 4. This library bridges that gap by providing decorators and utilities to integrate x402 seamlessly into NestJS applications.
+
+## Development & Contributing
+
+### Release Process
+
+This project uses [Conventional Commits](https://conventionalcommits.org/) and [Semantic Release](https://semantic-release.gitbook.io/) for automated versioning and publishing.
+
+#### Commit Message Format
+
+- `feat: description` - New features (minor version bump)
+- `fix: description` - Bug fixes (patch version bump)
+- `feat!: description` or `BREAKING CHANGE:` - Breaking changes (major version bump)
+- `docs: description` - Documentation changes
+- `chore: description` - Maintenance tasks
+- `ci: description` - CI/CD changes
+- `test: description` - Test changes
+
+#### Release Workflow
+
+1. Commits to the `main` branch trigger the release workflow
+2. Semantic-release analyzes commit messages to determine the version bump
+3. Generates release notes and changelog
+4. Publishes to npm with provenance
+5. Creates a GitHub release
+
+#### Required Secrets
+
+To enable releases, set these repository secrets:
+
+- `NPM_TOKEN` - npm authentication token for publishing packages
+
+The `GITHUB_TOKEN` is provided automatically by GitHub Actions.
