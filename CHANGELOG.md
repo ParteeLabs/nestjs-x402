@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/ParteeLabs/nestjs-x402/compare/v1.0.0...v1.1.0) (2025-11-12)
+
+
+### Features
+
+* move to use OIDC ([a7a22fd](https://github.com/ParteeLabs/nestjs-x402/commit/a7a22fd0b4bb59acf49b68520708a8db2d6a7cd9))
+
 # 1.0.0 (2025-11-12)
 
 
