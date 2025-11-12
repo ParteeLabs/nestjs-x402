@@ -1,17 +1,18 @@
-import type { DynamicModule } from '@nestjs/common';
+import { Module, type DynamicModule } from '@nestjs/common';
 
-import type { X402ModuleAsyncOptions, X402ModuleOptions, X402ProviderOptions } from './types/module.type';
+import type { X402ModuleOptions, X402RegisterAsyncOptions, X402RegisterOptions } from './types/module.type';
 
 import { MODULE_OPTION_KEY } from './constants/module-options.constant';
 import { X402PaymentService } from './services/x402-payment.service';
 
-const DEFAULT_X402_MODULE_OPTIONS: Partial<X402ProviderOptions> = {
+const DEFAULT_X402_MODULE_OPTIONS: Partial<X402ModuleOptions> = {
   x402Version: 1,
   recipients: [],
 };
 
+@Module({})
 export class X402Module {
-  static validateOptions({ recipients, resource }: X402ProviderOptions) {
+  static validateOptions({ recipients, resource }: X402ModuleOptions) {
     if (recipients?.length === 0) {
       throw new Error('At least one recipient must be specified in X402Module options.');
     }
@@ -20,7 +21,7 @@ export class X402Module {
     }
   }
 
-  static forRoot(options: X402ModuleOptions): DynamicModule {
+  static register(options: X402RegisterOptions): DynamicModule {
     const mergedOptions = {
       ...DEFAULT_X402_MODULE_OPTIONS,
       ...options,
@@ -41,7 +42,7 @@ export class X402Module {
     };
   }
 
-  static forRootAsync({ global, useFactory, imports = [], inject }: X402ModuleAsyncOptions): DynamicModule {
+  static registerAsync({ global, useFactory, imports = [], inject }: X402RegisterAsyncOptions): DynamicModule {
     return {
       module: X402Module,
       imports,
@@ -53,7 +54,7 @@ export class X402Module {
             const mergedOptions = {
               ...DEFAULT_X402_MODULE_OPTIONS,
               ...options,
-            } as X402ProviderOptions;
+            } as X402ModuleOptions;
             this.validateOptions(mergedOptions);
             return mergedOptions;
           },
