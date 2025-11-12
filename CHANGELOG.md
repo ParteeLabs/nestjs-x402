@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/ParteeLabs/nestjs-x402/compare/v1.1.1...v1.2.0) (2025-11-12)
+
+
+### Features
+
+* reduce bundle size ([72b4640](https://github.com/ParteeLabs/nestjs-x402/commit/72b4640f451ba1c7cec4df21ef0d3f857755383e))
+
 ## [1.1.1](https://github.com/ParteeLabs/nestjs-x402/compare/v1.1.0...v1.1.1) (2025-11-12)
 
 
