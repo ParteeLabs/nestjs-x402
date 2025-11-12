@@ -16,9 +16,10 @@ export default defineConfig([
     entry: ['src/index.ts'],
     format: ['cjs'],
     outDir: 'dist/cjs',
+    outExtension: () => ({ js: '.js' }),
     dts: false, // Only generate declarations in the ESM build
     sourcemap: true,
-    clean: false, // Avoid cleaning to preserve ESM output
+    clean: true, // Avoid cleaning to preserve ESM output
     skipNodeModulesBundle: true,
     external: ['@nestjs/common', '@nestjs/core', 'express'],
     noExternal: ['x402', 'reflect-metadata'],
