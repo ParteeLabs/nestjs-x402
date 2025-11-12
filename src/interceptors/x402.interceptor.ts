@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { catchError, Observable, throwError } from 'rxjs';
 
 import { X402PaymentService } from '../services/x402-payment.service';
@@ -54,14 +54,16 @@ export class X402Interceptor implements NestInterceptor {
       resourcePath,
     });
     const request: Request = context.switchToHttp().getRequest();
-    const { valid, x402Response } = await this.paymentService.verifyPayment(
+    const response: Response = context.switchToHttp().getResponse();
+    const { valid, x402Response, headers } = await this.paymentService.processPayment({
       paymentRequirements,
-      request.header('X-PAYMENT')
-    );
+      paymentHeader: request.header('X-PAYMENT'),
+    });
     if (!valid) {
       return throwError(() => x402Response);
     }
-
+    /// Set payment response headers.
+    response.setHeaders(headers!);
     /// Payment is valid, proceed with the request.
     return next.handle();
   }

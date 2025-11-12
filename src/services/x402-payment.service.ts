@@ -1,23 +1,34 @@
 import { Inject, Injectable, RequestMethod } from '@nestjs/common';
-import { verify } from 'x402/verify';
+import { useFacilitator } from 'x402/verify';
 import { exact } from 'x402/schemes';
 import { findMatchingPaymentRequirements, processPriceToAtomicAmount } from 'x402/shared';
-import { ERC20TokenAmount, HTTPRequestStructure, Network, PaymentPayload, PaymentRequirements } from 'x402/types';
+import {
+  ERC20TokenAmount,
+  HTTPRequestStructure,
+  Network,
+  PaymentPayload,
+  PaymentRequirements,
+  settleResponseHeader,
+} from 'x402/types';
 
 import { X402ApiInferredOptionsType, X402ApiOptionsType } from '../decorators/x402-api-options.decorator';
 
 import type { X402ModuleOptions } from '../types/module.type';
 import { PricingRequirement } from '../types/x402.type';
-import { VerifyPaymentResult } from '../types/payment-service.type';
+import { ProcessPaymentInput, ProcessPaymentResult } from '../types/payment-service.type';
 
 import { MODULE_OPTION_KEY } from '../constants/module-options.constant';
 import { VALID_METHODS } from '../constants/http.constant';
 
-import { toQueryParams } from '../utils/schema.uitl';
+import { toQueryParams } from '../utils/schema.util';
+import { response } from 'express';
 
 @Injectable()
 export class X402PaymentService {
-  constructor(@Inject(MODULE_OPTION_KEY) private readonly config: X402ModuleOptions) {}
+  facilitator: ReturnType<typeof useFacilitator>;
+  constructor(@Inject(MODULE_OPTION_KEY) private readonly config: X402ModuleOptions) {
+    this.facilitator = useFacilitator(config.facilitator);
+  }
 
   getRecipientByNetwork(network: Network) {
     const recipient = this.config.recipients.find((recipient) => recipient.network === network);
@@ -88,10 +99,7 @@ export class X402PaymentService {
     return accepts;
   }
 
-  async verifyPayment(
-    paymentRequirements: PaymentRequirements[],
-    paymentHeader?: string
-  ): Promise<VerifyPaymentResult> {
+  async processPayment({ paymentRequirements, paymentHeader }: ProcessPaymentInput): Promise<ProcessPaymentResult> {
     if (!paymentHeader) {
       return {
         valid: false,
@@ -118,10 +126,10 @@ export class X402PaymentService {
       };
     }
     /// Select available payment requirement and check for validity.
+    const selectedPaymentRequirement =
+      findMatchingPaymentRequirements(paymentRequirements, decodedPayment) || paymentRequirements[0];
     try {
-      const selectedPaymentRequirement =
-        findMatchingPaymentRequirements(paymentRequirements, decodedPayment) || paymentRequirements[0];
-      const response = await verify(decodedPayment, selectedPaymentRequirement);
+      const response = await this.facilitator.verify(decodedPayment, selectedPaymentRequirement);
       if (!response.isValid) {
         return {
           valid: false,
@@ -142,9 +150,25 @@ export class X402PaymentService {
         },
       };
     }
-    // All checks passed.
-    return {
-      valid: true,
-    };
+    /// Settle the payment.
+    try {
+      const settleResponse = await this.facilitator.settle(decodedPayment, selectedPaymentRequirement);
+      const responseHeader = settleResponseHeader(settleResponse);
+      return {
+        valid: true,
+        headers: new Map([['X-PAYMENT-RESPONSE', responseHeader]]),
+      };
+    } catch (error) {
+      return {
+        valid: false,
+        x402Response: {
+          x402Version: this.config.x402Version,
+          error: 'Error settling payment: ' + (error as Error).message,
+          accepts: paymentRequirements,
+        },
+      };
+    }
   }
+
+  async settle() {}
 }
