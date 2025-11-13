@@ -1,4 +1,6 @@
 import {
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   RequestMethod,
@@ -34,13 +36,17 @@ export class X402Interceptor implements NestInterceptor {
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     /// Check for HTTP and Route options for X402.
-    const contextType = context.getType();
+    const t = context.getType();
     const apiOptions = this.reflector.get(X402ApiOptions, context.getHandler());
-    if (contextType !== 'http' || apiOptions === undefined) {
+    if (t != 'http' || apiOptions === undefined) {
       return next.handle();
     }
     const method: RequestMethod = this.reflector.get(METHOD_METADATA, context.getHandler());
-    const resourcePath: string = this.reflector.get(PATH_METADATA, context.getHandler());
+    const routePath: string = this.reflector.get(PATH_METADATA, context.getHandler());
+    const controllerPath: string = this.reflector.get(PATH_METADATA, context.getClass()) || '';
+
+    // Construct full resource path ensuring proper slashes
+    const resourcePath = `/${[controllerPath, routePath].filter(Boolean).join('/').replace(/\/+/g, '/')}`;
 
     /// Dynamic pricing case: Handle dynamic pricing logic.
     if (apiOptions.isDynamicPricing) {
@@ -72,7 +78,7 @@ export class X402Interceptor implements NestInterceptor {
             error: err.message,
             accepts: paymentRequirements,
           };
-          return throwError(() => response);
+          throw new HttpException(response, HttpStatus.PAYMENT_REQUIRED);
         }
         return throwError(() => err);
       })
@@ -101,7 +107,7 @@ export class X402Interceptor implements NestInterceptor {
     ).pipe(
       mergeMap(({ valid, x402Response, headers }) => {
         if (!valid) {
-          return throwError(() => x402Response);
+          throw new HttpException(x402Response!, HttpStatus.PAYMENT_REQUIRED);
         }
         /// Set payment response headers.
         if (headers && typeof headers === 'object') {
