@@ -1,3 +1,10 @@
+## [1.2.4](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.3...v1.2.4) (2025-11-13)
+
+
+### Bug Fixes
+
+* incorrect resourcePath build ([2dc4fd2](https://github.com/ParteeLabs/nestjs-x402/commit/2dc4fd20bcd64bb94211e36f9420f2e3365dbe3d))
+
 ## [1.2.3](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.2...v1.2.3) (2025-11-13)
 
 
