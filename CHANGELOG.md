@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.2...v1.2.3) (2025-11-13)
+
+
+### Bug Fixes
+
+* interceptor got hanged ([2efc3cf](https://github.com/ParteeLabs/nestjs-x402/commit/2efc3cf9209792185633bdb6eb87f90576759db3))
+
 ## [1.2.2](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.1...v1.2.2) (2025-11-12)
 
 
