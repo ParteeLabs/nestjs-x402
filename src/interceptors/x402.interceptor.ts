@@ -9,7 +9,7 @@ import {
 import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, from, mergeMap, Observable, throwError } from 'rxjs';
 
 import { X402PaymentService } from '../services/x402-payment.service';
 import { X402DynamicPricing } from '../exceptions/x402-dynamic-pricing.exception';
@@ -34,9 +34,9 @@ export class X402Interceptor implements NestInterceptor {
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     /// Check for HTTP and Route options for X402.
-    const t = context.getType();
+    const contextType = context.getType();
     const apiOptions = this.reflector.get(X402ApiOptions, context.getHandler());
-    if (t != 'http' || apiOptions === undefined) {
+    if (contextType !== 'http' || apiOptions === undefined) {
       return next.handle();
     }
     const method: RequestMethod = this.reflector.get(METHOD_METADATA, context.getHandler());
@@ -46,26 +46,8 @@ export class X402Interceptor implements NestInterceptor {
     if (apiOptions.isDynamicPricing) {
       return this.handleDynamicPricing(next, apiOptions, method, resourcePath);
     }
-
     /// Static pricing case: Validate the payment.
-    const paymentRequirements = this.paymentService.getExactPaymentRequirements({
-      ...apiOptions,
-      method,
-      resourcePath,
-    });
-    const request: Request = context.switchToHttp().getRequest();
-    const response: Response = context.switchToHttp().getResponse();
-    const { valid, x402Response, headers } = await this.paymentService.processPayment({
-      paymentRequirements,
-      paymentHeader: request.header('X-PAYMENT'),
-    });
-    if (!valid) {
-      return throwError(() => x402Response);
-    }
-    /// Set payment response headers.
-    response.setHeaders(headers!);
-    /// Payment is valid, proceed with the request.
-    return next.handle();
+    return this.handleStaticPricing(context, next, apiOptions, method, resourcePath);
   }
 
   protected handleDynamicPricing(
@@ -93,6 +75,40 @@ export class X402Interceptor implements NestInterceptor {
           return throwError(() => response);
         }
         return throwError(() => err);
+      })
+    );
+  }
+
+  protected handleStaticPricing(
+    context: ExecutionContext,
+    next: CallHandler,
+    apiOptions: X402ApiOptionsType,
+    method: RequestMethod,
+    resourcePath: string
+  ): Observable<any> {
+    const paymentRequirements = this.paymentService.getExactPaymentRequirements({
+      ...apiOptions,
+      method,
+      resourcePath,
+    });
+    const request: Request = context.switchToHttp().getRequest();
+    const response: Response = context.switchToHttp().getResponse();
+    return from(
+      this.paymentService.processPayment({
+        paymentRequirements,
+        paymentHeader: request.header('X-PAYMENT'),
+      })
+    ).pipe(
+      mergeMap(({ valid, x402Response, headers }) => {
+        if (!valid) {
+          return throwError(() => x402Response);
+        }
+        /// Set payment response headers.
+        if (headers && typeof headers === 'object') {
+          response.setHeaders(headers);
+        }
+        /// Payment is valid, proceed with the request.
+        return next.handle();
       })
     );
   }
