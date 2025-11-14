@@ -1,3 +1,10 @@
+## [1.2.7](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.6...v1.2.7) (2025-11-14)
+
+
+### Bug Fixes
+
+* module loader hanged due to Reflector ([6a3e508](https://github.com/ParteeLabs/nestjs-x402/commit/6a3e5086e755053cbb20f48866a9989399b03848))
+
 ## [1.2.6](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.5...v1.2.6) (2025-11-14)
 
 
