@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.4...v1.2.5) (2025-11-14)
+
+
+### Bug Fixes
+
+* missing interceptor at module exports ([99d5452](https://github.com/ParteeLabs/nestjs-x402/commit/99d545249fabf118c6b3aa1418dc357b5f00528b))
+
 ## [1.2.4](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.3...v1.2.4) (2025-11-13)
 
 
