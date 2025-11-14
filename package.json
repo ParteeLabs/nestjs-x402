@@ -20,7 +20,8 @@
   "scripts": {
     "build": "tsup",
     "test:e2e": "jest --config jest.config.js",
-    "release": "npx semantic-release"
+    "release": "npx semantic-release",
+    "release:local": "pnpm build && pnpm link --global"
   },
   "type": "module",
   "main": "dist/cjs/index.cjs",

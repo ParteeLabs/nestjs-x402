@@ -29,8 +29,10 @@ import { MODULE_OPTION_KEY } from '../constants/module-options.constant';
 @Injectable()
 export class X402Interceptor implements NestInterceptor {
   constructor(
+    @Inject(Reflector.name)
     private readonly reflector: Reflector,
-    @Inject(MODULE_OPTION_KEY) private readonly config: X402ModuleOptions,
+    @Inject(MODULE_OPTION_KEY)
+    private readonly config: X402ModuleOptions,
     private readonly paymentService: X402PaymentService
   ) {}
 

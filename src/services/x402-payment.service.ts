@@ -26,7 +26,10 @@ import { response } from 'express';
 @Injectable()
 export class X402PaymentService {
   facilitator: ReturnType<typeof useFacilitator>;
-  constructor(@Inject(MODULE_OPTION_KEY) private readonly config: X402ModuleOptions) {
+  constructor(
+    @Inject(MODULE_OPTION_KEY)
+    private readonly config: X402ModuleOptions
+  ) {
     this.facilitator = useFacilitator(config.facilitator);
   }
 
