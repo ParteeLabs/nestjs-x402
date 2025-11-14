@@ -4,6 +4,7 @@ import type { X402ModuleOptions, X402RegisterAsyncOptions, X402RegisterOptions }
 
 import { MODULE_OPTION_KEY } from './constants/module-options.constant';
 import { X402PaymentService } from './services/x402-payment.service';
+import { X402Interceptor } from './interceptors/x402.interceptor';
 
 const DEFAULT_X402_MODULE_OPTIONS: Partial<X402ModuleOptions> = {
   x402Version: 1,
@@ -36,8 +37,9 @@ export class X402Module {
           useValue: mergedOptions,
         },
         X402PaymentService,
+        X402Interceptor,
       ],
-      exports: [MODULE_OPTION_KEY, X402PaymentService],
+      exports: [MODULE_OPTION_KEY, X402PaymentService, X402Interceptor],
       global: options.global ?? false,
     };
   }
@@ -61,8 +63,9 @@ export class X402Module {
           inject,
         },
         X402PaymentService,
+        X402Interceptor,
       ],
-      exports: [MODULE_OPTION_KEY, X402PaymentService],
+      exports: [MODULE_OPTION_KEY, X402PaymentService, X402Interceptor],
       global: global ?? false,
     };
   }
