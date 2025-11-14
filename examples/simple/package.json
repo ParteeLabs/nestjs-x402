@@ -20,9 +20,11 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@coinbase/x402": "^0.7.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
+    "nestjs-x402": "^1.2.6",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
