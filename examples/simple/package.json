@@ -19,14 +19,14 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "link:local": "pnpm link nestjs-x402",
-    "unlink:local": "pnpm unlink nestjs-x402 && pnpm install --force"
+    "unlink:local": "rm -f pnpm-workspace.yaml && pnpm install"
   },
   "dependencies": {
     "@coinbase/x402": "^0.7.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
-    "nestjs-x402": "^1.2.6",
+    "nestjs-x402": "^1.2.7",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
