@@ -1,6 +1,6 @@
 {
   "name": "nestjs-x402",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "x402 support for NestJS",
   "keywords": [
     "nestjs",

@@ -1,3 +1,10 @@
+## [1.2.6](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.5...v1.2.6) (2025-11-14)
+
+
+### Bug Fixes
+
+* module got hanged ([720d7a3](https://github.com/ParteeLabs/nestjs-x402/commit/720d7a39876632fb07f35d4e0990c5770a0df298))
+
 ## [1.2.5](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.4...v1.2.5) (2025-11-14)
 
 
