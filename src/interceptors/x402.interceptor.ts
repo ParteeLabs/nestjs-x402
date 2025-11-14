@@ -34,7 +34,7 @@ export class X402Interceptor implements NestInterceptor {
     private readonly paymentService: X402PaymentService
   ) {}
 
-  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     /// Check for HTTP and Route options for X402.
     const t = context.getType();
     const apiOptions = this.reflector.get(X402ApiOptions, context.getHandler());
