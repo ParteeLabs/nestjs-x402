@@ -21,7 +21,6 @@ import { MODULE_OPTION_KEY } from '../constants/module-options.constant';
 import { VALID_METHODS } from '../constants/http.constant';
 
 import { toQueryParams } from '../utils/schema.util';
-import { response } from 'express';
 
 @Injectable()
 export class X402PaymentService {
@@ -44,14 +43,14 @@ export class X402PaymentService {
   mergeToResponseSchema({
     method,
     discoverable,
-    inputSchema,
-    outputSchema,
+    inputSchema = {},
+    outputSchema = {},
   }: X402ApiOptionsType & X402ApiInferredOptionsType) {
     const input: HTTPRequestStructure & { discoverable: boolean } = {
       type: 'http',
       method: VALID_METHODS[method],
       discoverable: !!discoverable,
-      bodyFields: inputSchema || {},
+      bodyFields: inputSchema,
       bodyType: 'json',
     };
     if (inputSchema) {
@@ -63,10 +62,8 @@ export class X402PaymentService {
       }
     }
     return {
-      inputSchema: {
-        input,
-        output: outputSchema,
-      },
+      input,
+      output: outputSchema,
     };
   }
 

@@ -9,6 +9,7 @@ export class AppController {
   @Get()
   @X402ApiOptions({
     apiPrices: [{ price: '$0.001', network: 'base' }],
+    description: 'Get a warm greeting from me!',
   })
   @UseInterceptors(X402Interceptor)
   getHello(): string {

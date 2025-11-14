@@ -11,7 +11,7 @@ import {
 import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
-import { catchError, from, mergeMap, Observable, throwError } from 'rxjs';
+import { catchError, from, switchMap, Observable, throwError, of } from 'rxjs';
 
 import { X402PaymentService } from '../services/x402-payment.service';
 import { X402DynamicPricing } from '../exceptions/x402-dynamic-pricing.exception';
@@ -33,6 +33,7 @@ export class X402Interceptor implements NestInterceptor {
     private readonly reflector: Reflector,
     @Inject(MODULE_OPTION_KEY)
     private readonly config: X402ModuleOptions,
+    @Inject(X402PaymentService)
     private readonly paymentService: X402PaymentService
   ) {}
 
@@ -43,12 +44,12 @@ export class X402Interceptor implements NestInterceptor {
     if (t != 'http' || apiOptions === undefined) {
       return next.handle();
     }
+    // TODO: Dynamic platform for Express or Fastify.
     const method: RequestMethod = this.reflector.get(METHOD_METADATA, context.getHandler());
     const routePath: string = this.reflector.get(PATH_METADATA, context.getHandler());
     const controllerPath: string = this.reflector.get(PATH_METADATA, context.getClass()) || '';
 
-    // Construct full resource path ensuring proper slashes
-    const resourcePath = `/${[controllerPath, routePath].filter(Boolean).join('/').replace(/\/+/g, '/')}`;
+    const resourcePath = `/${controllerPath}/${routePath}`.replace(/\/+/g, '/');
 
     /// Dynamic pricing case: Handle dynamic pricing logic.
     if (apiOptions.isDynamicPricing) {
@@ -107,12 +108,13 @@ export class X402Interceptor implements NestInterceptor {
         paymentHeader: request.header('X-PAYMENT'),
       })
     ).pipe(
-      mergeMap(({ valid, x402Response, headers }) => {
+      switchMap(({ valid, x402Response, headers }) => {
         if (!valid) {
-          throw new HttpException(x402Response!, HttpStatus.PAYMENT_REQUIRED);
+          response.statusCode = HttpStatus.PAYMENT_REQUIRED;
+          return of(x402Response);
         }
         /// Set payment response headers.
-        if (headers && typeof headers === 'object') {
+        if (headers) {
           response.setHeaders(headers);
         }
         /// Payment is valid, proceed with the request.
