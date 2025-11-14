@@ -1,3 +1,10 @@
+## [1.2.8](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.7...v1.2.8) (2025-11-14)
+
+
+### Bug Fixes
+
+* invalid schema ([4b672c2](https://github.com/ParteeLabs/nestjs-x402/commit/4b672c28451912f8af23812a937a816287c48deb))
+
 ## [1.2.7](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.6...v1.2.7) (2025-11-14)
 
 
