@@ -75,7 +75,46 @@ Notes:
 
 ### Dynamic pricing
 
-_Coming soon..._
+When the price depends on request details (quantity, content size, user tier, etc.), mark the route with `isDynamicPricing: true` and throw `X402DynamicPricing` from your handler with computed `PricingRequirement[]`.
+The interceptor will catch it and return a 402 response containing the dynamic `accepts` list.
+
+Example dynamic-pricing handler:
+
+```ts
+// src/dynamic.controller.ts
+import { Controller, Get, Query, UseInterceptors } from '@nestjs/common';
+import { X402ApiOptions, X402Interceptor, X402DynamicPricing } from 'nestjs-x402';
+import type { PricingRequirement } from 'nestjs-x402';
+
+@Controller('content')
+export class ContentController {
+  @Get('download')
+  @X402ApiOptions({
+    isDynamicPricing: true,
+    description: 'Download content (dynamic price based on size)',
+  })
+  @UseInterceptors(X402Interceptor)
+  async download(@Query('size') size: string) {
+    const bytes = Number(size) || 0;
+    const dynamicPrices: PricingRequirement[] = [
+      {
+        price: `$${(bytes / 1000000).toFixed(4)}`,
+        network: 'base',
+      },
+    ];
+
+    // Throw the dynamic pricing exception — interceptor converts this into a 402 response
+    throw new X402DynamicPricing(dynamicPrices, 'Payment required for this download');
+  }
+}
+```
+
+Flow summary:
+
+- Client requests the route without an `X-PAYMENT` header.
+- Your handler computes prices and throws `X402DynamicPricing` with `PricingRequirement[]`.
+- `X402Interceptor` returns HTTP 402 with `accepts` derived from the dynamic prices.
+- Client builds a valid `X-PAYMENT` header (using x402 client libraries) and retries; interceptor validates and settles the payment, then the handler is allowed to proceed.
 
 ### Registering asynchronously
 
