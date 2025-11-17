@@ -13,7 +13,7 @@ import { AppService } from './app.service';
       resource: 'https://example.com/my-digital-resource',
       recipients: [
         {
-          payTo: '0x7474747474747474747474747474747474747474',
+          payTo: '0x8bf15b7c1888d0082c045bdeeb038ccab78d5231',
           network: 'base',
         },
       ],

@@ -21,7 +21,93 @@ We recommend waiting for a stable release before using this library in productio
 
 ## Usage
 
-> Placeholder: Detailed usage instructions will be added here.
+### Static pricing
+
+When pricing is known at design time, decorate your route with `@X402ApiOptions` and provide `apiPrices`.
+The `X402Interceptor` will generate exact payment requirements and require clients to include a valid `X-PAYMENT` header.
+
+Example module registration (static):
+
+```ts
+// src/app.module.ts
+import { X402Module } from 'nestjs-x402';
+import { facilitator } from '@coinbase/x402';
+...
+@Module({
+  imports: [
+    X402Module.register({
+      global: true, // optional: export providers globally
+      x402Version: 1,
+      resource: 'https://example.com/my-digital-resource',
+      recipients: [{ payTo: '0x8bf15b7c1888d0082c045bdeeb038ccab78d5231', network: 'base' }],
+      facilitator,
+    }),
+  ],
+  ...
+})
+export class AppModule {}
+```
+
+Protect a route with static pricing:
+
+```ts
+// src/app.controller.ts
+import { X402ApiOptions, X402Interceptor } from 'nestjs-x402';
+...
+@Controller()
+export class AppController {
+  @Get('greeting')
+  @X402ApiOptions({
+    apiPrices: [{ price: '$0.001', network: 'base' }],
+    description: 'Get a warm greeting',
+  })
+  @UseInterceptors(X402Interceptor)
+  getGreeting() {
+    return { message: 'Hello — you paid!' };
+  }
+}
+```
+
+Notes:
+
+- Clients must include an `X-PAYMENT` header (the signed x402 payment header). Without it the endpoint returns HTTP 402 and an `accepts` list describing valid payment requirements.
+- You can apply the interceptor globally via `APP_INTERCEPTOR` if you prefer not to decorate every route. The interceptor will ignore route without the `@X402ApiOptions` decorator.
+
+### Dynamic pricing
+
+_Coming soon..._
+
+### Registering asynchronously
+
+If your facilitator or recipients are loaded from a config service, use `registerAsync`:
+
+```ts
+X402Module.registerAsync({
+  global: true,
+  useFactory: async () => ({
+    x402Version: 1,
+    resource: process.env.X402_RESOURCE!,
+    recipients: [{ payTo: process.env.PAYTO_BASE!, network: 'base' }],
+    facilitator: /* your facilitator config */ {},
+  }),
+  inject: [],
+});
+```
+
+### Try it locally (example project)
+
+This repository includes a simple example under `examples/simple` you can run:
+
+```bash
+cd examples/simple
+pnpm install    # or npm install
+pnpm start:dev  # or npm run start:dev
+```
+
+Testing:
+
+- Call the protected route without `X-PAYMENT` to receive HTTP 402 and the `accepts` list.
+- Use the upstream `@coinbase/x402` or other x402 client tools to construct a valid `X-PAYMENT` header and call the endpoint again to complete the payment flow.
 
 ## Motivation
 
