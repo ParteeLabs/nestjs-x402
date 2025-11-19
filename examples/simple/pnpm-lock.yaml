@@ -21,8 +21,8 @@ importers:
         specifier: ^11.0.1
         version: 11.1.8(@nestjs/common@11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.8)
       nestjs-x402:
-        specifier: ^1.2.7
-        version: 1.2.7(@nestjs/common@11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.8)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(x402@0.7.1(@solana/sysvars@3.0.3(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3))(@tanstack/query-core@5.90.7)(@tanstack/react-query@5.90.7(react@18.3.1))(bufferutil@4.0.9)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.3.1)(typescript@5.9.3)(utf-8-validate@5.0.10)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)))
+        specifier: ^1.2.8
+        version: 1.2.8(@nestjs/common@11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.8)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(x402@0.7.1(@solana/sysvars@3.0.3(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3))(@tanstack/query-core@5.90.7)(@tanstack/react-query@5.90.7(react@18.3.1))(bufferutil@4.0.9)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.3.1)(typescript@5.9.3)(utf-8-validate@5.0.10)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)))
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -1618,8 +1618,8 @@ packages:
   '@types/uuid@8.3.4':
     resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
 
-  '@types/validator@13.15.8':
-    resolution: {integrity: sha512-/NAHBJ0RwpsbLzzbLoLm/GnvCGB+A0/p5S61RUIsh7j3MP2dMkdUbWNdFqnluLlUheAs1CR2GlX2R7uzb7Tc0w==}
+  '@types/validator@13.15.10':
+    resolution: {integrity: sha512-T8L6i7wCuyoK8A/ZeLYt1+q0ty3Zb9+qbSSvrIVitzT3YjZqkTZ40IbRsPanlB4h1QB3JVL1SYCdR6ngtFYcuA==}
 
   '@types/ws@7.4.7':
     resolution: {integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==}
@@ -3418,8 +3418,8 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
-  libphonenumber-js@1.12.26:
-    resolution: {integrity: sha512-MagMOuqEXB2Pa90cWE+BoCmcKJx+de5uBIicaUkQ+uiEslZ0OBMNOkSZT/36syXNHu68UeayTxPm3DYM2IHoLQ==}
+  libphonenumber-js@1.12.27:
+    resolution: {integrity: sha512-8gHhHzzcnY1EF4BS5L/lrjv2VAZWd6ltU7c/sqoktRZSQvZl4g8hrgXtXHXGkSFKFYArFON12zUNJrNVqJ9u4g==}
 
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
@@ -3617,8 +3617,8 @@ packages:
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
-  nestjs-x402@1.2.7:
-    resolution: {integrity: sha512-Is+YAO79kbjhMUrBZrZRQcAiPtopaAN046twegONqs44i91r4l+kjB4Pz7eR94k/Oc3uzdzS/Ek+nmblNgDBWQ==}
+  nestjs-x402@1.2.8:
+    resolution: {integrity: sha512-v+ngYeWsqVmsgOjKFMf8Y6WzOLp/wkwfUD7JhrdgtN5QK0uvCRRrrhre4OazQZsZH2Wet4LNlfr767L8YAe+sA==}
     peerDependencies:
       '@nestjs/common': ^11.0.0
       '@nestjs/core': ^11.0.0
@@ -7380,7 +7380,7 @@ snapshots:
 
   '@types/uuid@8.3.4': {}
 
-  '@types/validator@13.15.8':
+  '@types/validator@13.15.10':
     optional: true
 
   '@types/ws@7.4.7':
@@ -8608,8 +8608,8 @@ snapshots:
 
   class-validator@0.14.2:
     dependencies:
-      '@types/validator': 13.15.8
-      libphonenumber-js: 1.12.26
+      '@types/validator': 13.15.10
+      libphonenumber-js: 1.12.27
       validator: 13.15.23
     optional: true
 
@@ -9921,7 +9921,7 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  libphonenumber-js@1.12.26:
+  libphonenumber-js@1.12.27:
     optional: true
 
   lines-and-columns@1.2.4: {}
@@ -10088,7 +10088,7 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  nestjs-x402@1.2.7(@nestjs/common@11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.8)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(x402@0.7.1(@solana/sysvars@3.0.3(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3))(@tanstack/query-core@5.90.7)(@tanstack/react-query@5.90.7(react@18.3.1))(bufferutil@4.0.9)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.3.1)(typescript@5.9.3)(utf-8-validate@5.0.10)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))):
+  nestjs-x402@1.2.8(@nestjs/common@11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.8)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(x402@0.7.1(@solana/sysvars@3.0.3(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3))(@tanstack/query-core@5.90.7)(@tanstack/react-query@5.90.7(react@18.3.1))(bufferutil@4.0.9)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.3.1)(typescript@5.9.3)(utf-8-validate@5.0.10)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))):
     dependencies:
       '@nestjs/common': 11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.8(@nestjs/common@11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.8)(reflect-metadata@0.2.2)(rxjs@7.8.2)

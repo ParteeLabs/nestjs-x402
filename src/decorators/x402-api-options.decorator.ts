@@ -1,37 +1,21 @@
-import { RequestMethod } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import type { SchemaObject } from 'openapi3-ts/oas30';
 
-import type { PricingRequirement } from '../types/x402.type';
+import { X402ApiConfig } from '../types/router.type';
 
-export type X402ApiOptionsType = {
-  apiPrices?: PricingRequirement[];
-  isDynamicPricing?: boolean;
-  description?: string;
-  discoverable?: boolean;
-  maxTimeoutSeconds?: number;
-  mimeType?: string;
-  inputSchema?: Record<string, SchemaObject>;
-  outputSchema?: Record<string, SchemaObject>;
-};
+export type X402ApiOptionsConfig = Omit<X402ApiConfig, 'method' | 'resourcePath'>;
 
-export const DEFAULT_API_OPTIONS: Partial<X402ApiOptionsType> = {
+export const DEFAULT_API_OPTIONS: Partial<X402ApiOptionsConfig> = {
   isDynamicPricing: false,
   maxTimeoutSeconds: 60,
   discoverable: false,
   mimeType: 'application/json',
 };
 
-function apiOptionsWithDefault(options: Partial<X402ApiOptionsType>): X402ApiOptionsType {
+function apiOptionsWithDefault(options: Partial<X402ApiOptionsConfig>): X402ApiOptionsConfig {
   return {
     ...DEFAULT_API_OPTIONS,
     ...options,
   };
 }
 
-export const X402ApiOptions = Reflector.createDecorator<X402ApiOptionsType>({ transform: apiOptionsWithDefault });
-
-export type X402ApiInferredOptionsType = {
-  method: RequestMethod;
-  resourcePath: string;
-};
+export const X402ApiOptions = Reflector.createDecorator<X402ApiOptionsConfig>({ transform: apiOptionsWithDefault });

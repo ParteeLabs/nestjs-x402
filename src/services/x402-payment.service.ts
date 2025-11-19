@@ -11,8 +11,6 @@ import {
   settleResponseHeader,
 } from 'x402/types';
 
-import { X402ApiInferredOptionsType, X402ApiOptionsType } from '../decorators/x402-api-options.decorator';
-
 import type { X402ModuleOptions } from '../types/module.type';
 import { PricingRequirement } from '../types/x402.type';
 import { ProcessPaymentInput, ProcessPaymentResult } from '../types/payment-service.type';
@@ -21,6 +19,7 @@ import { MODULE_OPTION_KEY } from '../constants/module-options.constant';
 import { VALID_METHODS } from '../constants/http.constant';
 
 import { toQueryParams } from '../utils/schema.util';
+import { X402ApiConfig } from '../types/router.type';
 
 @Injectable()
 export class X402PaymentService {
@@ -40,12 +39,7 @@ export class X402PaymentService {
     return recipient;
   }
 
-  mergeToResponseSchema({
-    method,
-    discoverable,
-    inputSchema = {},
-    outputSchema = {},
-  }: X402ApiOptionsType & X402ApiInferredOptionsType) {
+  mergeToResponseSchema({ method, discoverable, inputSchema = {}, outputSchema = {} }: X402ApiConfig) {
     const input: HTTPRequestStructure & { discoverable: boolean } = {
       type: 'http',
       method: VALID_METHODS[method],
@@ -67,11 +61,8 @@ export class X402PaymentService {
     };
   }
 
-  getExactPaymentRequirements(
-    apiOptions: X402ApiOptionsType & X402ApiInferredOptionsType,
-    dynamicPrices?: PricingRequirement[]
-  ): PaymentRequirements[] {
-    const { apiPrices, resourcePath, description = '' } = apiOptions;
+  getExactPaymentRequirements(config: X402ApiConfig, dynamicPrices?: PricingRequirement[]): PaymentRequirements[] {
+    const { apiPrices, resourcePath, description = '' } = config;
     const prices = dynamicPrices?.length ? dynamicPrices : apiPrices || [];
     const accepts: PaymentRequirements[] = prices.map(({ price, network }) => {
       const atomicAmountForAsset = processPriceToAtomicAmount(price, network);
@@ -89,7 +80,7 @@ export class X402PaymentService {
         payTo: this.getRecipientByNetwork(network).payTo,
         maxTimeoutSeconds: 60,
         asset: asset.address,
-        outputSchema: this.mergeToResponseSchema(apiOptions),
+        outputSchema: this.mergeToResponseSchema(config),
         extra: {
           name: (asset as ERC20TokenAmount['asset']).eip712?.name,
           version: (asset as ERC20TokenAmount['asset']).eip712?.version,
@@ -169,6 +160,4 @@ export class X402PaymentService {
       };
     }
   }
-
-  async settle() {}
 }
