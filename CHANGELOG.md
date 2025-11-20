@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/ParteeLabs/nestjs-x402/compare/v1.3.0...v1.3.1) (2025-11-20)
+
+
+### Bug Fixes
+
+* lack of extendable for dynamic pricing exception ([e61f570](https://github.com/ParteeLabs/nestjs-x402/commit/e61f5708553c9abe5f5645df97b9de226247ef4f))
+
 # [1.3.0](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.8...v1.3.0) (2025-11-20)
 
 
