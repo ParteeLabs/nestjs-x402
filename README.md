@@ -21,12 +21,9 @@ We recommend waiting for a stable release before using this library in productio
 
 ## Usage
 
-### Static pricing
+### Module registering
 
-When pricing is known at design time, decorate your route with `@X402ApiOptions` and provide `apiPrices`.
-The `X402Interceptor` will generate exact payment requirements and require clients to include a valid `X-PAYMENT` header.
-
-Example module registration (static):
+The `X402Module` needs to be registered to use the `X402PaymentService`, `X402Interceptor`, and enable functionality of X402 payment processing.
 
 ```ts
 // src/app.module.ts
@@ -47,6 +44,30 @@ import { facilitator } from '@coinbase/x402';
 })
 export class AppModule {}
 ```
+
+### Module registering asynchronously
+
+If your facilitator or recipients are loaded from a config service, use `registerAsync`:
+
+```ts
+X402Module.registerAsync({
+  global: true,
+  useFactory: async () => ({
+    x402Version: 1,
+    resource: process.env.X402_RESOURCE!,
+    recipients: [{ payTo: process.env.PAYTO_BASE!, network: 'base' }],
+    facilitator: {
+      /* your facilitator config */
+    },
+  }),
+  inject: [],
+});
+```
+
+### Static pricing
+
+When pricing is known at design time, decorate your route with `@X402ApiOptions` and provide `apiPrices`.
+The `X402Interceptor` will generate exact payment requirements and require clients to include a valid `X-PAYMENT` header.
 
 Protect a route with static pricing:
 
@@ -75,24 +96,63 @@ Notes:
 
 ### Dynamic pricing
 
-_Coming soon..._
+When the price depends on request details (quantity, content size, user tier, etc.), mark the route with `isDynamicPricing: true` and throw `X402DynamicPricing` from your handler with computed `PricingRequirement[]`.
+The interceptor will catch it and return a 402 response containing the dynamic `accepts` list.
 
-### Registering asynchronously
-
-If your facilitator or recipients are loaded from a config service, use `registerAsync`:
+Example dynamic-pricing handler:
 
 ```ts
-X402Module.registerAsync({
-  global: true,
-  useFactory: async () => ({
-    x402Version: 1,
-    resource: process.env.X402_RESOURCE!,
-    recipients: [{ payTo: process.env.PAYTO_BASE!, network: 'base' }],
-    facilitator: /* your facilitator config */ {},
-  }),
-  inject: [],
-});
+// src/app.controller.ts
+import { X402ApiOptions, X402Interceptor } from 'nestjs-x402';
+...
+@Controller()
+export class AppController {
+  @Get('greeting')
+  @X402ApiOptions({
+    description: 'Get a warm greeting',
+    isDynamicPricing: true,
+    inputSchema: {
+      number_of_greetings: {
+        type: 'number',
+        description: 'Number of greetings to receive',
+      },
+    },
+  })
+  @UseInterceptors(X402Interceptor)
+  async getGreeting(
+     @Request() req: ExpressRequest,
+    @Query() { number_of_greetings = 1 },
+    @X402ReqConfig() x402Config: X402ApiConfig, // injected per-request x402 config
+  ) {
+    const prices: PricingRequirement[] = [
+      { price: `$${1 * Number(number_of_greetings)}`, network: 'base' },
+    ];
+    const paymentHeader = req.header('X-PAYMENT');
+    if (!paymentHeader) {
+      throw new X402DynamicPricing(prices);
+    }
+
+    const paymentRequirements = this.paymentService.getExactPaymentRequirements(
+      x402Config,
+      prices,
+    );
+    const { valid, x402Response } = await this.paymentService.processPayment({
+      paymentRequirements,
+      paymentHeader,
+    });
+    if (!valid) {
+      throw new HttpException(x402Response!, 402);
+    }
+  }
+}
 ```
+
+Flow summary:
+
+- Client requests the route without an `X-PAYMENT` header.
+- Your handler computes prices and throws `X402DynamicPricing` with `PricingRequirement[]`.
+- `X402Interceptor` returns HTTP 402 with `accepts` derived from the dynamic prices.
+- Client builds a valid `X-PAYMENT` header (using x402 client libraries) and retries; interceptor validates and settles the payment, then the handler is allowed to proceed.
 
 ### Try it locally (example project)
 

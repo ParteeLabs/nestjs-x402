@@ -15,12 +15,14 @@ import { catchError, from, switchMap, Observable, throwError, of } from 'rxjs';
 
 import { X402PaymentService } from '../services/x402-payment.service';
 import { X402DynamicPricing } from '../exceptions/x402-dynamic-pricing.exception';
-import { X402ApiOptions, X402ApiOptionsType } from '../decorators/x402-api-options.decorator';
+import { X402ApiOptions } from '../decorators/x402-api-options.decorator';
+import { attachApiConfig } from '../decorators/x402-api-config.decorator';
 
 import { X402ModuleOptions } from '../types/module.type';
 import { X402Response } from '../types/x402.type';
 
 import { MODULE_OPTION_KEY } from '../constants/module-options.constant';
+import { X402ApiConfig } from '../types/router.type';
 /**
  * Interceptor for handling X402 responding logic.
  * Default/empty/x402Scan registering cases: Returns a 402 Payment Required response with default payment requirements.
@@ -48,58 +50,45 @@ export class X402Interceptor implements NestInterceptor {
     const method: RequestMethod = this.reflector.get(METHOD_METADATA, context.getHandler());
     const routePath: string = this.reflector.get(PATH_METADATA, context.getHandler());
     const controllerPath: string = this.reflector.get(PATH_METADATA, context.getClass()) || '';
-
     const resourcePath = `/${controllerPath}/${routePath}`.replace(/\/+/g, '/');
+    const config: X402ApiConfig = {
+      ...apiOptions,
+      method,
+      resourcePath,
+    };
 
     /// Dynamic pricing case: Handle dynamic pricing logic.
     if (apiOptions.isDynamicPricing) {
-      return this.handleDynamicPricing(next, apiOptions, method, resourcePath);
+      /// Attach the config to the request for further usage.
+      attachApiConfig(context.switchToHttp().getRequest(), config);
+      return this.handleDynamicPricing(context, next, config);
     }
     /// Static pricing case: Validate the payment.
-    return this.handleStaticPricing(context, next, apiOptions, method, resourcePath);
+    return this.handleStaticPricing(context, next, config);
   }
 
-  protected handleDynamicPricing(
-    next: CallHandler,
-    apiOptions: X402ApiOptionsType,
-    method: RequestMethod,
-    resourcePath: string
-  ): Observable<any> {
+  protected handleDynamicPricing(context: ExecutionContext, next: CallHandler, config: X402ApiConfig): Observable<any> {
+    const response: Response = context.switchToHttp().getResponse();
     return next.handle().pipe(
       catchError((err) => {
         if (err instanceof X402DynamicPricing) {
-          const paymentRequirements = this.paymentService.getExactPaymentRequirements(
-            {
-              ...apiOptions,
-              method,
-              resourcePath,
-            },
-            err.dynamicPrices
-          );
-          const response: X402Response = {
+          const paymentRequirements = this.paymentService.getExactPaymentRequirements(config, err.dynamicPrices);
+          const x402Response: X402Response = {
             x402Version: this.config.x402Version,
             error: err.message,
             accepts: paymentRequirements,
           };
-          throw new HttpException(response, HttpStatus.PAYMENT_REQUIRED);
+          response.statusCode = HttpStatus.PAYMENT_REQUIRED;
+          return of(x402Response);
+        } else {
+          return throwError(() => err);
         }
-        return throwError(() => err);
       })
     );
   }
 
-  protected handleStaticPricing(
-    context: ExecutionContext,
-    next: CallHandler,
-    apiOptions: X402ApiOptionsType,
-    method: RequestMethod,
-    resourcePath: string
-  ): Observable<any> {
-    const paymentRequirements = this.paymentService.getExactPaymentRequirements({
-      ...apiOptions,
-      method,
-      resourcePath,
-    });
+  protected handleStaticPricing(context: ExecutionContext, next: CallHandler, config: X402ApiConfig): Observable<any> {
+    const paymentRequirements = this.paymentService.getExactPaymentRequirements(config);
     const request: Request = context.switchToHttp().getRequest();
     const response: Response = context.switchToHttp().getResponse();
     return from(
