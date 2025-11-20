@@ -52,10 +52,12 @@ class TestController {
   })
   getDynamicPricing() {
     // Simulate dynamic pricing scenario
-    throw new X402DynamicPricing([
-      { price: '$0.005', network: 'base' },
-      { price: '0.0005 MATIC', network: 'polygon' },
-    ]);
+    throw new X402DynamicPricing({
+      dynamicPrices: [
+        { price: '$0.005', network: 'base' },
+        { price: '0.0005 MATIC', network: 'polygon' },
+      ],
+    });
   }
 
   @Post('with-body')
@@ -316,7 +318,7 @@ describe('X402Interceptor (e2e)', () => {
 
           // Check that input/output schema is included
           expect(accepts[0]).toHaveProperty('outputSchema');
-          expect(accepts[0].outputSchema).toHaveProperty('inputSchema');
+          expect(accepts[0].outputSchema).toHaveProperty('input');
         });
     });
 
@@ -383,7 +385,7 @@ describe('X402Interceptor (e2e)', () => {
         .expect(402)
         .expect((res) => {
           const requirement = res.body.accepts[0];
-          expect(requirement.outputSchema.inputSchema.input).toHaveProperty('discoverable', true);
+          expect(requirement.outputSchema.input).toHaveProperty('discoverable', true);
         });
     });
   });
