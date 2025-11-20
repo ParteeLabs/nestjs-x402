@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/ParteeLabs/nestjs-x402/compare/v1.3.1...v1.3.2) (2025-11-20)
+
+
+### Bug Fixes
+
+* correct example with latest version ([961da16](https://github.com/ParteeLabs/nestjs-x402/commit/961da16a214c686cb1f02d86fbf96df2f72ae41a))
+
 ## [1.3.1](https://github.com/ParteeLabs/nestjs-x402/compare/v1.3.0...v1.3.1) (2025-11-20)
 
 
