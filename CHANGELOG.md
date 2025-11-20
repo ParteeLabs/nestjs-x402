@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.8...v1.3.0) (2025-11-20)
+
+
+### Features
+
+* new dynamic pricing behavior ([75e8b2c](https://github.com/ParteeLabs/nestjs-x402/commit/75e8b2c19994db0671f93213709cb244085978b3))
+
 ## [1.2.8](https://github.com/ParteeLabs/nestjs-x402/compare/v1.2.7...v1.2.8) (2025-11-14)
 
 
