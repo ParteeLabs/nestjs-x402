@@ -129,7 +129,7 @@ export class AppController {
     ];
     const paymentHeader = req.header('X-PAYMENT');
     if (!paymentHeader) {
-      throw new X402DynamicPricing(prices);
+      throw new X402DynamicPricing({ dynamicPrices: prices });
     }
 
     const paymentRequirements = this.paymentService.getExactPaymentRequirements(
