@@ -62,7 +62,7 @@ export class X402PaymentService {
   }
 
   getExactPaymentRequirements(config: X402ApiConfig, dynamicPrices?: PricingRequirement[]): PaymentRequirements[] {
-    const { apiPrices, resourcePath, description = '' } = config;
+    const { apiPrices, resourcePath, description = '', mimeType, maxTimeoutSeconds } = config;
     const prices = dynamicPrices?.length ? dynamicPrices : apiPrices || [];
     const accepts: PaymentRequirements[] = prices.map(({ price, network }) => {
       const atomicAmountForAsset = processPriceToAtomicAmount(price, network);
@@ -76,9 +76,9 @@ export class X402PaymentService {
         maxAmountRequired,
         resource: this.config.resource + resourcePath,
         description,
-        mimeType: '',
+        mimeType,
         payTo: this.getRecipientByNetwork(network).payTo,
-        maxTimeoutSeconds: 60,
+        maxTimeoutSeconds,
         asset: asset.address,
         outputSchema: this.mergeToResponseSchema(config),
         extra: {

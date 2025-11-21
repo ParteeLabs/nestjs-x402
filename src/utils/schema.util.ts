@@ -1,6 +1,6 @@
-import type { SchemaObject } from 'openapi3-ts/oas30';
+import { Schemas } from '../types/router.type';
 
-export function toQueryParams(schema: Record<string, SchemaObject>): Record<string, string> {
+export function toQueryParams(schema: Schemas): Record<string, string> {
   return Object.entries(schema).reduce((acc, [key, value]) => {
     acc[key] = value.description || 'string parameter';
     return acc;
