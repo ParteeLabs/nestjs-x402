@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/ParteeLabs/nestjs-x402/compare/v1.3.2...v1.3.3) (2025-11-21)
+
+
+### Bug Fixes
+
+* incorrect type for api schema ([45be3f5](https://github.com/ParteeLabs/nestjs-x402/commit/45be3f5afe2b5f711cdab57c43893f9fb04eb2f4))
+
 ## [1.3.2](https://github.com/ParteeLabs/nestjs-x402/compare/v1.3.1...v1.3.2) (2025-11-20)
 
 
