@@ -4,7 +4,7 @@ import { X402ApiConfig } from '../types/router.type';
 
 export type X402ApiOptionsConfig = Omit<X402ApiConfig, 'method' | 'resourcePath'>;
 
-export const DEFAULT_API_OPTIONS: Partial<X402ApiOptionsConfig> = {
+export const DEFAULT_API_OPTIONS: X402ApiOptionsConfig = {
   isDynamicPricing: false,
   maxTimeoutSeconds: 60,
   discoverable: false,
@@ -18,4 +18,6 @@ function apiOptionsWithDefault(options: Partial<X402ApiOptionsConfig>): X402ApiO
   };
 }
 
-export const X402ApiOptions = Reflector.createDecorator<X402ApiOptionsConfig>({ transform: apiOptionsWithDefault });
+export const X402ApiOptions = Reflector.createDecorator<Partial<X402ApiOptionsConfig>, X402ApiOptionsConfig>({
+  transform: apiOptionsWithDefault,
+});

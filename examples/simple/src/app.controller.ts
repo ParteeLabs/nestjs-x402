@@ -43,6 +43,7 @@ export class AppController {
       number_of_greetings: {
         type: 'number',
         description: 'Number of greetings to receive',
+        required: true,
       },
     },
   })
